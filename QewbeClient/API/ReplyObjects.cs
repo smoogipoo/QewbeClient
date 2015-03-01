@@ -4,22 +4,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace QewbeClient.API
 {
-    [Serializable]
+    [DataContract]
     public class File
     {
+        [DataMember]
         public string Name { get; set; }
+        [DataMember]
         public string Domain { get; set; }
+        [DataMember]
         public string Type { get; set; }
+        [DataMember]
         public Int64 Uploaded { get; set; }
+        [DataMember]
         public string Checksum { get; set; }
 
-        [NonSerialized]
         public string InternalName;
 
         internal event UploadResult UploadSucceeded;
@@ -45,34 +50,42 @@ namespace QewbeClient.API
         }
     }
 
-    [Serializable]
+    [DataContract]
     public class Reply
     {
+        [DataMember]
         public bool OK { get; set; }
+        [DataMember]
         public Response Response { get; set; }
+        [DataMember]
+        public string Error { get; set; }
     }
 
-    [Serializable]
+    [DataContract]
     public class CreateAccountReply : Reply
     {
+        [DataMember]
         public string Username { get; set; }
     }
 
-    [Serializable]
+    [DataContract]
     public class LoginReply : Reply
     {
+        [DataMember]
         public string Token { get; set; }
     }
 
-    [Serializable]
+    [DataContract]
     public class UploadFileReply : Reply
     {
+        [DataMember]
         public File File { get; set; }
     }
 
-    [Serializable]
+    [DataContract]
     public class GetFilesReply : Reply
     {
+        [DataMember]
         public File[] Files { get; set; }
     }
 
