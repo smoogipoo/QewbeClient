@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(448, 292);
             this.Name = "Qewbe";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Qewbe_FormClosing);
             this.Load += new System.EventHandler(this.Qewbe_Load);
             this.ResumeLayout(false);
 

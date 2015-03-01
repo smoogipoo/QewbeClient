@@ -58,7 +58,10 @@ namespace QewbeClient.Config
                 sb.AppendLine(string.Format("{0}:{1}", kvp.Key, kvp.Value.ToString()));
             using (FileStream fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
             using (StreamWriter sw = new StreamWriter(fs))
+            {
+                sw.AutoFlush = true;
                 sw.Write(sb.ToString());
+            }
         }
     }
 }

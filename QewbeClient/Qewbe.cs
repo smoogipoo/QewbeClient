@@ -77,10 +77,15 @@ namespace QewbeClient
             }
         }
 
-        internal void Cleanup(object sender, EventArgs e)
+        internal void Cleanup()
         {
             config.Save();
             ActiveUser.Config.Save();
+        }
+
+        private void Qewbe_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Cleanup();
         }
     }
 }

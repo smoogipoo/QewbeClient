@@ -19,7 +19,6 @@ namespace QewbeClient
 
             Qewbe q = new Qewbe();
             Application.Run(q);
-            Application.ApplicationExit += q.Cleanup;
         }
     }
 }
