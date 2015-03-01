@@ -33,21 +33,30 @@ namespace QewbeClient
             workThread.Start();
 
             config = new ConfigManager(@"qewbe.cfg");
-            string activeUser = config.Read<string>(@"activeuser");
+            string activeUser = config.Read<string>(@"activeuser", string.Empty);
             if (string.IsNullOrEmpty(activeUser))
             {
+                //Todo: Prompt for account creation
                 HttpClient.SendRequest(new NetRequest(Endpoints.CREATE_ACCOUNT, delegate(object r)
                 {
                     CreateAccountReply reply = Serializer.Deserialize<CreateAccountReply>(r.ToString());
                     if (!reply.OK)
                         throw new Exception(reply.Response.ToString());
-                    config.Write(@"username", activeUser);
-                    config.Write(@"password", "test"); //Todo: Write pwd
-                    ActiveUser = new User(activeUser);
+                    config.Write(@"activeuser", activeUser);
+
+                    //Todo: Remember to change the following 2 lines
+                    ActiveUser = new User(activeUser, "test");
                 }, activeUser, "test", "test@test.com"));
             }
             else
                 ActiveUser = new User(activeUser);
+        }
+
+        private void switchUser()
+        {
+            ActiveUser.Logout();
+
+            //Todo: Implement
         }
 
         private void update()
@@ -61,6 +70,12 @@ namespace QewbeClient
 
                 Thread.Sleep(20);
             }
+        }
+
+        internal void Cleanup(object sender, EventArgs e)
+        {
+            config.Save();
+            ActiveUser.Config.Save();
         }
     }
 }

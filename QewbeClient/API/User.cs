@@ -19,11 +19,11 @@ namespace QewbeClient.API
         internal string Username { get; private set; }
         internal static string Token { get; private set; }
 
-        internal User(string username)
+        internal User(string username, string newPassword = "")
         {
             Config = new ConfigManager(string.Format(@"qewbe.<{0}>.cfg", username));
             Username = username;
-            Token = Config.Read<string>(@"password");
+            Token = Config.Read<string>(@"password", newPassword);
 
             Login();
         }
@@ -56,13 +56,16 @@ namespace QewbeClient.API
 
         internal void RemoveFile(string file)
         {
+            if (!IsLoggedIn)
+                return;
+
             HttpClient.SendRequest(new NetRequest(Endpoints.REMOVE_FILE, delegate(object r)
             {
                 Reply reply = Serializer.Deserialize<Reply>(r.ToString());
                 if (!reply.OK)
                     return;
                 //Todo: Remove from list here
-            }, file));
+            }, Token, file));
         }
     }
 }

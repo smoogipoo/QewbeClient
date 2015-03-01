@@ -16,7 +16,10 @@ namespace QewbeClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Qewbe());
+
+            Qewbe q = new Qewbe();
+            Application.Run(q);
+            Application.ApplicationExit += q.Cleanup;
         }
     }
 }
