@@ -34,6 +34,7 @@ namespace QewbeClient
 
             config = new ConfigManager(@"qewbe.cfg");
             string activeUser = config.Read<string>(@"activeuser", string.Empty);
+            string password = "test2";
             if (string.IsNullOrEmpty(activeUser))
             {
                 //Todo: Prompt for account creation
@@ -42,11 +43,15 @@ namespace QewbeClient
                     CreateAccountReply reply = Serializer.Deserialize<CreateAccountReply>(r.ToString());
                     if (!reply.OK)
                         throw new Exception(reply.Response.ToString());
+                    //Todo: Write from login form
+                    activeUser = reply.Username;
+
+
                     config.Write(@"activeuser", activeUser);
 
                     //Todo: Remember to change the following 2 lines
-                    ActiveUser = new User(activeUser, "test");
-                }, activeUser, "test", "test@test.com"));
+                    ActiveUser = new User(activeUser, password);
+                }, "test10", password, "test@test.com"));
             }
             else
                 ActiveUser = new User(activeUser);

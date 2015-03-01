@@ -21,7 +21,7 @@ namespace QewbeClient.API
 
         internal User(string username, string newPassword = "")
         {
-            Config = new ConfigManager(string.Format(@"qewbe.<{0}>.cfg", username));
+            Config = new ConfigManager(string.Format(@"qewbe.{0}.cfg", username));
             Username = username;
             Token = Config.Read<string>(@"password", newPassword);
 
