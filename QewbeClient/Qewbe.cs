@@ -20,7 +20,7 @@ namespace QewbeClient
         private Thread workThread;
 
         internal User ActiveUser;
-        internal UploadQueue UploadQueue = new UploadQueue();
+        internal static UploadQueue UploadQueue = new UploadQueue();
 
         public Qewbe()
         {

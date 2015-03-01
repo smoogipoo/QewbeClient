@@ -22,7 +22,7 @@ namespace QewbeClient.API
         public string Type { get; set; }
         [DataMember]
         public Int64 Uploaded { get; set; }
-        [DataMember]
+        [DataMember(Name = "Hash")]
         public string Checksum { get; set; }
 
         public string InternalName;

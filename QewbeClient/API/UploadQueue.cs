@@ -29,22 +29,24 @@ namespace QewbeClient.API
             tempDir = Path.GetTempPath();
         }
 
-        internal void Add(FileInfo file, bool fromTemp = false)
+        internal void Add(string file, bool fromTemp = false)
         {
-            if (fromTemp)
-                file = file.CopyTo(tempDir);
+            FileInfo info = new FileInfo(file);
 
-            string checksum = calculateChecksum(file);
+            if (fromTemp)
+                info = info.CopyTo(tempDir);
+
+            string checksum = calculateChecksum(info);
 
             HttpClient.SendRequest(new NetRequest(Endpoints.UPLOAD_FILE, delegate(object r)
             {
                 UploadFileReply reply = Serializer.Deserialize<UploadFileReply>(r.ToString());
-                reply.File.InternalName = file.FullName;
+                reply.File.InternalName = info.FullName;
                 if (!reply.OK)
                     return;
                 lock (fileQueue)
                     fileQueue.Add(reply.File);
-            }, User.Token, Path.GetExtension(file.FullName), checksum, @"object"));
+            }, User.Token, Path.GetExtension(info.FullName), checksum, @"object"));
         }
 
         internal void Remove(FileInfo file)
@@ -90,7 +92,14 @@ namespace QewbeClient.API
         private string calculateChecksum(FileInfo file)
         {
             using (SHA256Managed sha = new SHA256Managed())
-                return Encoding.ASCII.GetString(sha.ComputeHash(file.OpenRead()));
+            {
+                byte[] result = sha.ComputeHash(file.OpenRead());
+
+                string ret = string.Empty;
+                for (int i = 0; i < result.Length; i++)
+                    ret += result[i].ToString("x2");
+                return ret;
+            }
         }
     }
 }
