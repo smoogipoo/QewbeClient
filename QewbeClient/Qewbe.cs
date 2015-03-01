@@ -43,16 +43,18 @@ namespace QewbeClient
                         throw new Exception(reply.Response.ToString());
                     config.Write(@"username", activeUser);
                     config.Write(@"password", "test"); //Todo: Write pwd
+                    ActiveUser = new User(activeUser);
                 }, activeUser, "test", "test@test.com"));
             }
-            ActiveUser = new User(activeUser);
+            else
+                ActiveUser = new User(activeUser);
         }
 
         private void update()
         {
             while (true)
             {
-                if (ActiveUser.IsLoggedIn)
+                if (ActiveUser != null && ActiveUser.IsLoggedIn)
                     UploadQueue.Update();
 
                 HttpClient.Update();
