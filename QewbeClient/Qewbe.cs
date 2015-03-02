@@ -1,43 +1,53 @@
-﻿using System;
+﻿using QewbeClient.API;
+using QewbeClient.API.Reply;
+using QewbeClient.Config;
+using QewbeClient.Helpers;
+using QewbeClient.Http;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QewbeClient.Http;
-using QewbeClient.Config;
-using QewbeClient.API;
-using System.Threading;
-using QewbeClient.API.Reply;
 
 namespace QewbeClient
 {
-    public partial class Qewbe : Form
+    internal static class Qewbe
     {
-        private ConfigManager config;
-        private Thread workThread;
+        private static SynchronizationContext mainContext;
 
-        internal User ActiveUser;
+        private static ConfigManager config;
+        private static Thread workThread;
+
+        internal static User ActiveUser;
         internal static UploadQueue UploadQueue = new UploadQueue();
 
-        internal static OverlayForm OverlayForm = new OverlayForm();
+        internal static OverlayForm OverlayForm;
 
-        public Qewbe()
+        [STAThread]
+        private static void Main()
         {
-            InitializeComponent();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            OverlayForm = new OverlayForm();
+
+            startup();
+
+            mainContext = SynchronizationContext.Current;
+
+            Application.Run();
         }
 
-        private void Qewbe_Load(object sender, EventArgs e)
+        private static void startup()
         {
             workThread = new Thread(update) { IsBackground = true };
             workThread.Start();
 
             config = new ConfigManager(@"qewbe.cfg");
             string activeUser = config.Read<string>(@"activeuser", string.Empty);
-            string password = "test2";
+            string password = string.Empty;
+
             if (string.IsNullOrEmpty(activeUser))
             {
                 //Todo: Prompt for account creation
@@ -60,14 +70,14 @@ namespace QewbeClient
                 ActiveUser = new User(activeUser);
         }
 
-        private void switchUser()
+        internal static void SwitchUser()
         {
             ActiveUser.Logout();
 
             //Todo: Implement
         }
 
-        private void update()
+        private static void update()
         {
             while (true)
             {
@@ -82,19 +92,14 @@ namespace QewbeClient
 
         internal static void RunMainThread(Action action)
         {
-            if (ActiveForm != null)
-                Qewbe.ActiveForm.Invoke(action);
+            SynchronizationContext.SetSynchronizationContext(mainContext);
+            mainContext.Send(new SendOrPostCallback(delegate(object o) { action.Invoke(); }), null);
         }
 
-        internal void Cleanup()
+        internal static void Cleanup()
         {
             config.Save();
             ActiveUser.Config.Save();
-        }
-
-        private void Qewbe_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Cleanup();
         }
     }
 }

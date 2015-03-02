@@ -37,7 +37,7 @@ namespace QewbeClient.API
             if (fromTemp)
                 info = info.CopyTo(tempDir);
 
-            string checksum = calculateChecksum(info);
+            string checksum = Crypto.CalculateChecksum(info);
 
             HttpClient.SendRequest(new NetRequest(Endpoints.UPLOAD_FILE, delegate(object r)
             {
@@ -52,7 +52,7 @@ namespace QewbeClient.API
 
         internal void Remove(System.IO.FileInfo file)
         {
-            string checksum = calculateChecksum(file);
+            string checksum = Crypto.CalculateChecksum(file);
             lock (fileQueue)
                 fileQueue.RemoveAll(f => f.Checksum == checksum);
         }
@@ -88,19 +88,6 @@ namespace QewbeClient.API
             Interlocked.Decrement(ref processingCount);
             if (UploadFailed != null)
                 UploadFailed(file);
-        }
-
-        private string calculateChecksum(System.IO.FileInfo file)
-        {
-            using (SHA256Managed sha = new SHA256Managed())
-            {
-                byte[] result = sha.ComputeHash(file.OpenRead());
-
-                string ret = string.Empty;
-                for (int i = 0; i < result.Length; i++)
-                    ret += result[i].ToString("x2");
-                return ret;
-            }
         }
     }
 }
