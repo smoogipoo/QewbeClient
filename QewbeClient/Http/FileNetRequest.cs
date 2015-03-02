@@ -22,35 +22,17 @@ namespace QewbeClient.Http
             this.file = file;
         }
 
-        internal override void Perform()
+        protected override object Perform()
         {
-            ++UploadAttempts;
-
             WebClient wc = new WebClient();
             wc.UploadFileCompleted += Completed;
             wc.UploadProgressChanged += ProgressChanged;
 
             System.IO.FileInfo info = new System.IO.FileInfo(file.InternalName);
             byte[] data = new byte[info.Length];
-            info.OpenRead().ReadAsync(data, 0, data.Length).ContinueWith(delegate(Task<int> res)
-            {
-                try
-                {
-                    wc.UploadData(Endpoint, data);
-                    Callback(true);
-                }
-                catch
-                {
-                    if (UploadAttempts == MAX_ATTEMPTS)
-                    {
-                        Callback(false);
-                        return;
-                    }
-
-                    Thread.Sleep(5000);
-                    Perform();
-                }
-            });
+            info.OpenRead().Read(data, 0, data.Length);
+            wc.UploadData(Endpoint, data);
+            return true;
         }
     }
 }

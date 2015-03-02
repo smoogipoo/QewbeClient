@@ -11,40 +11,45 @@ namespace QewbeClient.Http
 {
     internal class NetRequest
     {
-        protected const int MAX_ATTEMPTS = 5;
+        private const int MAX_ATTEMPTS = 5;
 
         protected string Endpoint;
-        protected Action<object> Callback;
+        private Action<object> callback;
 
-        protected int UploadAttempts;
+        private int uploadAttempts;
 
         internal NetRequest(string endpoint, Action<object> callback, params string[] args)
         {
             Endpoint = string.Format(endpoint, args);
-            Callback = callback;
+            this.callback = callback;
         }
 
-        internal virtual void Perform()
+        internal void InternalPerform()
         {
-            ++UploadAttempts;
-
-            HttpWebRequest req = HttpWebRequest.CreateHttp(Endpoint);
-            req.GetResponseAsync().ContinueWith(delegate(Task<WebResponse> resp)
+            object result = null;
+            Task.Run(delegate
             {
-                try
+                bool failed = true;
+                while (failed && ++uploadAttempts < MAX_ATTEMPTS)
                 {
-                    using (StreamReader sr = new StreamReader(resp.Result.GetResponseStream()))
-                        Callback(sr.ReadToEnd());
+                    try
+                    {
+                        result = Perform();
+                        failed = false;
+                    }
+                    catch
+                    {
+                        Thread.Sleep(5000);
+                    }
                 }
-                catch
-                {
-                    if (UploadAttempts == MAX_ATTEMPTS)
-                        return;
+            }).ContinueWith(delegate { callback(result); });
+        }
 
-                    Thread.Sleep(5000);
-                    Perform();
-                }
-            });
+        protected virtual object Perform()
+        {
+            WebResponse resp = HttpWebRequest.CreateHttp(Endpoint).GetResponse();
+            using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                return sr.ReadToEnd();
         }
     }
 }
