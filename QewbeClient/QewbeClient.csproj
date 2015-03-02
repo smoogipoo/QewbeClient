@@ -45,10 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Reply\CreateAccountReply.cs" />
+    <Compile Include="API\Reply\GetFilesReply.cs" />
+    <Compile Include="API\Reply\LoginReply.cs" />
+    <Compile Include="API\Reply\ClientReply.cs" />
+    <Compile Include="API\Reply\UploadFile.cs" />
+    <Compile Include="API\Reply\UploadFileReply.cs" />
+    <Compile Include="API\Responses.cs" />
     <Compile Include="API\UploadQueue.cs" />
     <Compile Include="Config\ConfigManager.cs" />
-    <Compile Include="API\ReplyObjects.cs" />
-    <Compile Include="API\Serializer.cs" />
+    <Compile Include="Helpers\Serializer.cs" />
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Http\FileNetRequest.cs" />
     <Compile Include="Qewbe.cs">
@@ -88,6 +94,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

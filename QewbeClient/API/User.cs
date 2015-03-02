@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using QewbeClient.API.Reply;
 
 namespace QewbeClient.API
 {
@@ -61,7 +62,7 @@ namespace QewbeClient.API
 
             HttpClient.SendRequest(new NetRequest(Endpoints.REMOVE_FILE, delegate(object r)
             {
-                Reply reply = Serializer.Deserialize<Reply>(r.ToString());
+                ClientReply reply = Serializer.Deserialize<ClientReply>(r.ToString());
                 if (!reply.OK)
                     return;
                 //Todo: Remove from list here

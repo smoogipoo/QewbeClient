@@ -11,6 +11,7 @@ using QewbeClient.Http;
 using QewbeClient.Config;
 using QewbeClient.API;
 using System.Threading;
+using QewbeClient.API.Reply;
 
 namespace QewbeClient
 {

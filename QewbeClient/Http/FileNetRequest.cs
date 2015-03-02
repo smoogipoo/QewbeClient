@@ -1,4 +1,4 @@
-﻿using QewbeClient.API;
+﻿using QewbeClient.API.Reply;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +11,12 @@ namespace QewbeClient.Http
 {
     internal class FileNetRequest : NetRequest
     {
-        private File file;
+        private UploadFile file;
 
         internal event UploadFileCompletedEventHandler Completed;
         internal event UploadProgressChangedEventHandler ProgressChanged;
 
-        internal FileNetRequest(File file, Action<object> callback = null)
+        internal FileNetRequest(UploadFile file, Action<object> callback = null)
             : base(string.Format(@"{0}/{1}", file.Domain, file.Name), callback, string.Empty)
         {
             this.file = file;

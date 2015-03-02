@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +8,8 @@ using QewbeClient.Http;
 using System.Threading;
 using System.Net;
 using QewbeClient.Helpers;
+using QewbeClient.API.Reply;
+using System.IO;
 
 namespace QewbeClient.API
 {
@@ -19,7 +20,7 @@ namespace QewbeClient.API
         internal event UploadResult UploadSucceeded;
         internal event UploadResult UploadFailed;
 
-        private List<File> fileQueue = new List<File>();
+        private List<UploadFile> fileQueue = new List<UploadFile>();
         private int processingCount;
 
         private string tempDir;
@@ -49,7 +50,7 @@ namespace QewbeClient.API
             }, User.Token, Path.GetExtension(info.FullName), checksum, @"object"));
         }
 
-        internal void Remove(FileInfo file)
+        internal void Remove(System.IO.FileInfo file)
         {
             string checksum = calculateChecksum(file);
             lock (fileQueue)
@@ -66,7 +67,7 @@ namespace QewbeClient.API
                 for (int i = 0; i < fileQueue.Count || processingCount == MAX_CONCURRENT_UPLOADS; i++)
                 {
                     Interlocked.Increment(ref processingCount);
-                    File currentFile = fileQueue[i];
+                    UploadFile currentFile = fileQueue[i];
                     fileQueue.RemoveAt(i);
                     currentFile.UploadSucceeded += uploadCompleted;
                     currentFile.UploadFailed += uploadFailed;
@@ -75,21 +76,21 @@ namespace QewbeClient.API
             }
         }
 
-        private void uploadCompleted(File file)
+        private void uploadCompleted(UploadFile file)
         {
             Interlocked.Decrement(ref processingCount);
             if (UploadSucceeded != null)
                 UploadSucceeded(file);
         }
 
-        private void uploadFailed(File file)
+        private void uploadFailed(UploadFile file)
         {
             Interlocked.Decrement(ref processingCount);
             if (UploadFailed != null)
                 UploadFailed(file);
         }
 
-        private string calculateChecksum(FileInfo file)
+        private string calculateChecksum(System.IO.FileInfo file)
         {
             using (SHA256Managed sha = new SHA256Managed())
             {
