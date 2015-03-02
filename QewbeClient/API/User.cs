@@ -41,6 +41,7 @@ namespace QewbeClient.API
                     throw new Exception(reply.Response.ToString()); //Todo: Change this
                 Token = reply.Token;
                 IsLoggedIn = true;
+                Qewbe.RunMainThread(delegate { Qewbe.OverlayForm.Show(); });
             }, Username, Token));
         }
 
@@ -52,6 +53,7 @@ namespace QewbeClient.API
             HttpClient.SendRequest(new NetRequest(Endpoints.LOGOUT, delegate(object r)
             {
                 IsLoggedIn = false;
+                Qewbe.RunMainThread(delegate { Qewbe.OverlayForm.Hide(); });
             }, Token));
         }
 

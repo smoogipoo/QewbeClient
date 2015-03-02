@@ -23,6 +23,8 @@ namespace QewbeClient
         internal User ActiveUser;
         internal static UploadQueue UploadQueue = new UploadQueue();
 
+        internal static OverlayForm OverlayForm = new OverlayForm();
+
         public Qewbe()
         {
             InitializeComponent();
@@ -76,6 +78,12 @@ namespace QewbeClient
 
                 Thread.Sleep(20);
             }
+        }
+
+        internal static void RunMainThread(Action action)
+        {
+            if (ActiveForm != null)
+                Qewbe.ActiveForm.Invoke(action);
         }
 
         internal void Cleanup()
