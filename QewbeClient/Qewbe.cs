@@ -50,6 +50,9 @@ namespace QewbeClient
 
             if (string.IsNullOrEmpty(activeUser))
             {
+                if (new LoginCreateAccount().ShowDialog() != DialogResult.OK)
+                    Application.Exit();
+
                 //Todo: Prompt for account creation
                 HttpClient.SendRequest(new NetRequest(Endpoints.CREATE_ACCOUNT, delegate(object r)
                 {
