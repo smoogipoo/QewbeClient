@@ -32,15 +32,16 @@ namespace QewbeClient
 
             OverlayForm = new OverlayForm();
 
-            startup();
-
-            mainContext = SynchronizationContext.Current;
-
-            Application.Run();
+            //Create the main thread
+            Form f = new Form();
+            f.Hide();
+            f.Load += delegate(object s, EventArgs e) { startup(); };
+            Application.Run(f);
         }
 
         private static void startup()
         {
+            mainContext = SynchronizationContext.Current;
             workThread = new Thread(update) { IsBackground = true };
             workThread.Start();
 
