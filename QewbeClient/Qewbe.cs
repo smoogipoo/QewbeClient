@@ -50,7 +50,7 @@ namespace QewbeClient
 
             if (string.IsNullOrEmpty(activeUser))
             {
-                if (new LoginCreateAccount().ShowDialog() != DialogResult.OK)
+                if (new LoginCreateAccontForm().ShowDialog() != DialogResult.OK)
                     Application.Exit();
 
                 //Todo: Prompt for account creation
