@@ -16,7 +16,7 @@ namespace QewbeClient
     {
         private static SynchronizationContext mainContext;
 
-        private static ConfigManager config;
+        internal static ConfigManager Config;
         private static Thread workThread;
 
         internal static User ActiveUser;
@@ -44,30 +44,14 @@ namespace QewbeClient
             workThread = new Thread(update) { IsBackground = true };
             workThread.Start();
 
-            config = new ConfigManager(@"qewbe.cfg");
-            string activeUser = config.Read<string>(@"activeuser", string.Empty);
+            Config = new ConfigManager(@"qewbe.cfg");
+            string activeUser = Config.Read<string>(@"activeuser", string.Empty);
             string password = string.Empty;
 
             if (string.IsNullOrEmpty(activeUser))
             {
                 if (new LoginCreateAccontForm().ShowDialog() != DialogResult.OK)
                     Application.Exit();
-
-                //Todo: Prompt for account creation
-                HttpClient.SendRequest(new NetRequest(Endpoints.CREATE_ACCOUNT, delegate(object r)
-                {
-                    CreateAccountReply reply = Serializer.Deserialize<CreateAccountReply>(r.ToString());
-                    if (!reply.OK)
-                        throw new Exception(reply.Response.ToString());
-                    //Todo: Write from login form
-                    activeUser = reply.Username;
-
-
-                    config.Write(@"activeuser", activeUser);
-
-                    //Todo: Remember to change the following 2 lines
-                    ActiveUser = new User(activeUser, password);
-                }, "test10", password, "test@test.com"));
             }
             else
                 ActiveUser = new User(activeUser);
@@ -101,7 +85,7 @@ namespace QewbeClient
 
         internal static void Cleanup()
         {
-            config.Save();
+            Config.Save();
             ActiveUser.Config.Save();
         }
     }

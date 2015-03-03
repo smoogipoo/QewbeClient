@@ -15,9 +15,9 @@ using QewbeClient.API.Reply;
 
 namespace QewbeClient
 {
-    public partial class LoginCreateAccontForm : Form
+    public partial class LoginForm : Form
     {
-        public LoginCreateAccontForm()
+        public LoginForm()
         {
             InitializeComponent();
 
@@ -26,15 +26,12 @@ namespace QewbeClient
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
         {
-            Hide();
-            DialogResult = new CreateAccountForm().ShowDialog(this);
-            Close();
+            DialogResult = DialogResult.Cancel;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            Hide();
-            DialogResult = new LoginForm().ShowDialog(this);
+            Qewbe.ActiveUser = new User(usernameBox.Text, passwordBox.Text);
             Close();
         }
     }

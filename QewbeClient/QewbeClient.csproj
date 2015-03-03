@@ -60,6 +60,15 @@
     <Compile Include="Controls\LoginCreateAccountForm.Designer.cs">
       <DependentUpon>LoginCreateAccountForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CreateAccountForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\CreateAccountForm.Designer.cs">
+      <DependentUpon>CreateAccountForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OverlayTextbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Helpers\Crypto.cs" />
     <Compile Include="Helpers\Serializer.cs" />
     <Compile Include="Helpers\Delegates.cs" />
@@ -70,8 +79,11 @@
     <Compile Include="OverlayForm.Designer.cs">
       <DependentUpon>OverlayForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Http\Endpoints.cs" />
     <Compile Include="Http\Client.cs" />
@@ -81,6 +93,12 @@
     <Compile Include="API\User.cs" />
     <EmbeddedResource Include="Controls\LoginCreateAccountForm.resx">
       <DependentUpon>LoginCreateAccountForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CreateAccountForm.resx">
+      <DependentUpon>CreateAccountForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
