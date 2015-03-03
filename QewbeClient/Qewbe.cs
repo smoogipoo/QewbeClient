@@ -30,32 +30,11 @@ namespace QewbeClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            //.NET creates sync context after declaring out first form
             OverlayForm = new OverlayForm();
-
-            //Create the main thread
-            Form f = new Form();
-            f.Hide();
-            f.Load += delegate(object s, EventArgs e) { startup(); };
-            Application.Run(f);
-        }
-
-        private static void startup()
-        {
             mainContext = SynchronizationContext.Current;
-            workThread = new Thread(update) { IsBackground = true };
-            workThread.Start();
 
-            Config = new ConfigManager(@"qewbe.cfg");
-            string activeUser = Config.Read<string>(@"activeuser", string.Empty);
-            string password = string.Empty;
-
-            if (string.IsNullOrEmpty(activeUser))
-            {
-                if (new LoginCreateAccontForm().ShowDialog() != DialogResult.OK)
-                    Application.Exit();
-            }
-            else
-                ActiveUser = new User(activeUser);
+            Application.Run(new StartupContext());
         }
 
         internal static void SwitchUser()
@@ -80,14 +59,36 @@ namespace QewbeClient
 
         internal static void RunMainThread(Action action)
         {
-            SynchronizationContext.SetSynchronizationContext(mainContext);
-            mainContext.Send(new SendOrPostCallback(delegate(object o) { action.Invoke(); }), null);
+            mainContext.Post(delegate(object s) { action(); }, null);
         }
 
         internal static void Cleanup()
         {
             Config.Save();
             ActiveUser.Config.Save();
+        }
+
+        private class StartupContext : ApplicationContext
+        {
+            internal StartupContext()
+            {
+                mainContext = SynchronizationContext.Current;
+
+                workThread = new Thread(update) { IsBackground = true };
+                workThread.Start();
+
+                Config = new ConfigManager(@"qewbe.cfg");
+                string activeUser = Config.Read<string>(@"activeuser", string.Empty);
+                string password = string.Empty;
+
+                if (string.IsNullOrEmpty(activeUser))
+                {
+                    if (new LoginCreateAccontForm().ShowDialog() != DialogResult.OK)
+                        Environment.Exit(1);
+                }
+                else
+                    ActiveUser = new User(activeUser);
+            }
         }
     }
 }

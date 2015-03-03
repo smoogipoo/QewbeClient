@@ -26,16 +26,25 @@ namespace QewbeClient
 
         private void btnCreateAccount_Click(object sender, EventArgs e)
         {
-            Hide();
-            DialogResult = new CreateAccountForm().ShowDialog(this);
-            Close();
+            showForm(new CreateAccountForm());
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            showForm(new LoginForm());
+        }
+
+        private void showForm(Form form)
+        {
             Hide();
-            DialogResult = new LoginForm().ShowDialog(this);
-            Close();
+            DialogResult dr = form.ShowDialog(this);
+            if (dr == DialogResult.Cancel)
+                Show(form);
+            else
+            {
+                DialogResult = dr;
+                Close();
+            }
         }
     }
 }
