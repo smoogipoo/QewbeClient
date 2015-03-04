@@ -13,6 +13,7 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace QewbeClient.API
 {
@@ -76,6 +77,7 @@ namespace QewbeClient.API
                         UploadFileReply reply = Serializer.Deserialize<UploadFileReply>(r.ToString());
                         if (!reply.OK)
                             return;
+                        Qewbe.RunMainThread(delegate { Clipboard.SetText(reply.File.Domain + @"/" + reply.File.Name); });
                     }, User.Token));
                 }
             }
