@@ -3,6 +3,7 @@ using QewbeClient.API.Reply;
 using QewbeClient.Config;
 using QewbeClient.Helpers;
 using QewbeClient.Http;
+using QewbeClient.Properties;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -90,6 +91,12 @@ namespace QewbeClient
                 else
                     ActiveUser = new User(activeUser);
                 Cleanup();
+
+                UploadQueue.UploadSucceeded += delegate
+                {
+                    using (System.Media.SoundPlayer player = new System.Media.SoundPlayer(Resources.Ding))
+                        player.Play();
+                };
             }
         }
     }
