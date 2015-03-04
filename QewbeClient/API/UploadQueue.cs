@@ -23,7 +23,7 @@ namespace QewbeClient.API
         internal event UploadResult UploadSucceeded;
         internal event UploadResult UploadFailed;
 
-        private List<UploadFile> fileQueue = new List<UploadFile>();
+        private List<FileInfo> fileQueue = new List<FileInfo>();
         private int processingCount;
 
         private string tempDir;
@@ -46,25 +46,15 @@ namespace QewbeClient.API
         internal void Add(string file)
         {
             FileInfo info = new FileInfo(file);
-
-            string checksum = Crypto.CalculateChecksum(info);
-
-            HttpClient.SendRequest(new NetRequest(Endpoints.UPLOAD_FILE, delegate(object r)
-            {
-                UploadFileReply reply = Serializer.Deserialize<UploadFileReply>(r.ToString());
-                reply.File.InternalName = info.FullName;
-                if (!reply.OK)
-                    return;
-                lock (fileQueue)
-                    fileQueue.Add(reply.File);
-            }, User.Token, Path.GetExtension(info.FullName), checksum, getMimeType(info.Extension)));
+            lock (fileQueue)
+                fileQueue.Add(info);
         }
 
         internal void Remove(System.IO.FileInfo file)
         {
             string checksum = Crypto.CalculateChecksum(file);
             lock (fileQueue)
-                fileQueue.RemoveAll(f => f.Checksum == checksum);
+                fileQueue.RemoveAll(f => f == file);
         }
 
         internal void Update()
@@ -77,11 +67,16 @@ namespace QewbeClient.API
                 for (int i = 0; i < fileQueue.Count || processingCount == MAX_CONCURRENT_UPLOADS; i++)
                 {
                     Interlocked.Increment(ref processingCount);
-                    UploadFile currentFile = fileQueue[i];
+
+                    FileInfo fi = fileQueue[i];
                     fileQueue.RemoveAt(i);
-                    currentFile.UploadSucceeded += uploadCompleted;
-                    currentFile.UploadFailed += uploadFailed;
-                    currentFile.BeginUpload();
+
+                    HttpClient.SendRequest(new FileNetRequest(Endpoints.UPLOAD_FILE, fi, delegate (object r)
+                    {
+                        UploadFileReply reply = Serializer.Deserialize<UploadFileReply>(r.ToString());
+                        if (!reply.OK)
+                            return;
+                    }, User.Token));
                 }
             }
         }
@@ -98,15 +93,6 @@ namespace QewbeClient.API
             Interlocked.Decrement(ref processingCount);
             if (UploadFailed != null)
                 UploadFailed(file);
-        }
-
-        private static string getMimeType(string ext)
-        {
-            string mimeType = "application/unknown";
-            RegistryKey key = Registry.ClassesRoot.OpenSubKey(ext.ToLower());
-            if (key != null && key.GetValue("Content Type") != null)
-                mimeType = key.GetValue("Content Type").ToString();
-            return mimeType;
         }
     }
 }

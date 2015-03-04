@@ -20,6 +20,7 @@ namespace QewbeClient.API
         E_FILEDOESNTEXIST = 8,
 
         //System errors
+        E_INTERNALERROR = -100,
         E_INVALIDMETHOD = -3,
         E_INVALIDREQUESTTYPE = -2,
         E_NORETURN = -1,

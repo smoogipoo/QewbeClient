@@ -45,7 +45,7 @@ namespace QewbeClient.Http
         /// 0 - Token, 1 - Extension, 2 - Checksum, 3 - Mime type
         /// </para>
         /// </summary>
-        internal static readonly string UPLOAD_FILE = string.Format(API_ENDPOINT, @"UploadFile") + @"&token={0}&ext={1}&hash={2}&type={3}";
+        internal static readonly string UPLOAD_FILE = string.Format(API_ENDPOINT, @"UploadFile") + @"&token={0}";
 
         /// <summary>
         /// GET QewbeAPI/RemoveFile

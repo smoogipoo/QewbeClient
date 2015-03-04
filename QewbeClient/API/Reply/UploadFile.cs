@@ -22,29 +22,5 @@ namespace QewbeClient.API.Reply
         public Int64 Uploaded { get; set; }
         [DataMember(Name = "Hash")]
         public string Checksum { get; set; }
-
-        public string InternalName;
-
-        internal event UploadResult UploadSucceeded;
-        internal event UploadResult UploadFailed;
-
-        public void BeginUpload()
-        {
-            HttpClient.SendRequest(new FileNetRequest(this, uploadCompleted));
-        }
-
-        private void uploadCompleted(object res)
-        {
-            if (res != null && (bool)res)
-            {
-                if (UploadSucceeded != null)
-                    UploadSucceeded(this);
-            }
-            else
-            {
-                if (UploadFailed != null)
-                    UploadFailed(this);
-            }
-        }
     }
 }
