@@ -45,18 +45,37 @@ namespace QewbeClient
                 switch (m.WParam.ToInt32())
                 {
                     case HK_CAPTUREDRAG:
-                    {
-                        dragStartPoint = Point.Empty;
-                        dragRectangle = SystemInformation.VirtualScreen;
-                        Opacity = 0.25f;
-                        Cursor = Cursors.Cross;
-                        WindowState = FormWindowState.Normal;
-                        TopMost = true;
-                        Location = new Point(dragRectangle.X, dragRectangle.Y);
-                        Size = new Size(dragRectangle.Width, dragRectangle.Height);
-                        Invalidate(dragRectangle);
-                    }
-                    break;
+                        {
+                            dragStartPoint = Point.Empty;
+                            dragRectangle = SystemInformation.VirtualScreen;
+                            Opacity = 0.25f;
+                            Cursor = Cursors.Cross;
+                            WindowState = FormWindowState.Normal;
+                            TopMost = true;
+                            Location = new Point(dragRectangle.X, dragRectangle.Y);
+                            Size = new Size(dragRectangle.Width, dragRectangle.Height);
+                            Invalidate(dragRectangle);
+                        }
+                        break;
+                    case HK_CAPTURESCREEN:
+                            captureArea(SystemInformation.VirtualScreen);
+                        break;
+                    case HK_UPLOADFILE:
+                        {
+                            using (OpenFileDialog ofd = new OpenFileDialog())
+                            {
+                                if (ofd.ShowDialog() == DialogResult.OK)
+                                    Qewbe.UploadQueue.Add(ofd.FileName);
+                            }
+                        }
+                        break;
+                    case HK_CAPTUREWINDOW:
+                        {
+                            Native.Rect rect = new Native.Rect();
+                            Native.GetWindowRect(Native.GetForegroundWindow(), ref rect);
+                            captureArea(Rectangle.FromLTRB(rect.Left, rect.Top, rect.Right, rect.Bottom));
+                        }
+                        break;
                 }
             }
             base.WndProc(ref m);
@@ -101,12 +120,7 @@ namespace QewbeClient
             base.OnMouseUp(e);
             mouseDown = false;
 
-            using (Bitmap b = new Bitmap(dragRectangle.Width, dragRectangle.Height))
-            using (Graphics g = Graphics.FromImage(b))
-            {
-                g.CopyFromScreen(dragRectangle.X, dragRectangle.Y, 0, 0, dragRectangle.Size);
-                Qewbe.UploadQueue.Add(b);
-            }
+            captureArea(dragRectangle);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -115,6 +129,16 @@ namespace QewbeClient
             e.Graphics.PixelOffsetMode = PixelOffsetMode.None;
             if (dragRectangle != SystemInformation.VirtualScreen)
                 e.Graphics.FillRectangle(Brushes.Magenta, dragRectangle);
+        }
+
+        private void captureArea(Rectangle area)
+        {
+            using (Bitmap b = new Bitmap(dragRectangle.Width, dragRectangle.Height))
+            using (Graphics g = Graphics.FromImage(b))
+            {
+                g.CopyFromScreen(dragRectangle.X, dragRectangle.Y, 0, 0, dragRectangle.Size);
+                Qewbe.UploadQueue.Add(b);
+            }
         }
 
         private void registerHotkey(Keys key, int id)
