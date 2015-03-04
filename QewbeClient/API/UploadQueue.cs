@@ -21,8 +21,8 @@ namespace QewbeClient.API
     {
         private const int MAX_CONCURRENT_UPLOADS = 5;
 
-        internal event UploadResult UploadSucceeded;
-        internal event UploadResult UploadFailed;
+        internal event UploadSucceededResult UploadSucceeded;
+        internal event UploadFailedResult UploadFailed;
 
         private List<FileInfo> fileQueue = new List<FileInfo>();
         private int processingCount;
@@ -76,8 +76,12 @@ namespace QewbeClient.API
                     {
                         UploadFileReply reply = Serializer.Deserialize<UploadFileReply>(r.ToString());
                         if (!reply.OK)
-                            return;
-                        Qewbe.RunMainThread(delegate { Clipboard.SetText(reply.File.Domain + @"/" + reply.File.Name); });
+                            uploadFailed(fi);
+                        else
+                        {
+                            Qewbe.RunMainThread(delegate { Clipboard.SetText(reply.File.Domain + @"/" + reply.File.Name); });
+                            UploadSucceeded(reply.File);
+                        }
                     }, User.Token));
                 }
             }
@@ -90,7 +94,7 @@ namespace QewbeClient.API
                 UploadSucceeded(file);
         }
 
-        private void uploadFailed(UploadFile file)
+        private void uploadFailed(FileInfo file)
         {
             Interlocked.Decrement(ref processingCount);
             if (UploadFailed != null)
