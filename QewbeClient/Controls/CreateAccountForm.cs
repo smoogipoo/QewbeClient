@@ -43,7 +43,8 @@ namespace QewbeClient
                 Qewbe.Config.Write<string>(@"activeuser", usernameBox.Text);
                 Qewbe.ActiveUser = new User(usernameBox.Text, passwordBox.Text);
 
-                Close();
+                DialogResult = DialogResult.OK;
+                Qewbe.RunMainThread(delegate { Close(); });
             }, usernameBox.Text, passwordBox.Text, emailBox.Text));
         }
     }

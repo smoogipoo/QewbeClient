@@ -31,6 +31,7 @@ namespace QewbeClient
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.OK;
             Qewbe.ActiveUser = new User(usernameBox.Text, passwordBox.Text);
             Close();
         }
