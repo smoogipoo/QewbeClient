@@ -25,7 +25,7 @@ namespace QewbeClient.Http
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Endpoint);
             req.Method = @"POST";
-            req.KeepAlive = true;
+            req.KeepAlive = false;
             req.Timeout = 3600000;
 
             using (Stream dataStream = new MemoryStream())
