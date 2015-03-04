@@ -48,7 +48,7 @@ namespace QewbeClient
                         {
                             dragStartPoint = Point.Empty;
                             dragRectangle = SystemInformation.VirtualScreen;
-                            Opacity = 0.25f;
+                            Opacity = 0.1f;
                             Cursor = Cursors.Cross;
                             WindowState = FormWindowState.Normal;
                             TopMost = true;
