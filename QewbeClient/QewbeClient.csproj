@@ -70,6 +70,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Helpers\Crypto.cs" />
+    <Compile Include="Helpers\Native.cs" />
     <Compile Include="Helpers\Serializer.cs" />
     <Compile Include="Helpers\Delegates.cs" />
     <Compile Include="Http\FileNetRequest.cs" />
@@ -99,6 +100,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OverlayForm.resx">
+      <DependentUpon>OverlayForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

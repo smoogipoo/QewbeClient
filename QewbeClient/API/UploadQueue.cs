@@ -10,6 +10,9 @@ using System.Net;
 using QewbeClient.Helpers;
 using QewbeClient.API.Reply;
 using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Microsoft.Win32;
 
 namespace QewbeClient.API
 {
@@ -30,12 +33,19 @@ namespace QewbeClient.API
             tempDir = Path.GetTempPath();
         }
 
-        internal void Add(string file, bool fromTemp = false)
+        internal void Add(Bitmap bitmap)
+        {
+            string name = Path.Combine(tempDir, Guid.NewGuid().ToString().Replace(@"-", string.Empty) + @".png");
+            ImageCodecInfo codec = ImageCodecInfo.GetImageEncoders().First(c => c.MimeType == @"image/png");
+            EncoderParameters encParams = new EncoderParameters(1);
+            encParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 100L);
+            bitmap.Save(name, codec, encParams);
+            Add(name);
+        }
+
+        internal void Add(string file)
         {
             FileInfo info = new FileInfo(file);
-
-            if (fromTemp)
-                info = info.CopyTo(tempDir);
 
             string checksum = Crypto.CalculateChecksum(info);
 
@@ -47,7 +57,7 @@ namespace QewbeClient.API
                     return;
                 lock (fileQueue)
                     fileQueue.Add(reply.File);
-            }, User.Token, Path.GetExtension(info.FullName), checksum, @"object"));
+            }, User.Token, Path.GetExtension(info.FullName), checksum, getMimeType(info.Extension)));
         }
 
         internal void Remove(System.IO.FileInfo file)
@@ -88,6 +98,15 @@ namespace QewbeClient.API
             Interlocked.Decrement(ref processingCount);
             if (UploadFailed != null)
                 UploadFailed(file);
+        }
+
+        private static string getMimeType(string ext)
+        {
+            string mimeType = "application/unknown";
+            RegistryKey key = Registry.ClassesRoot.OpenSubKey(ext.ToLower());
+            if (key != null && key.GetValue("Content Type") != null)
+                mimeType = key.GetValue("Content Type").ToString();
+            return mimeType;
         }
     }
 }

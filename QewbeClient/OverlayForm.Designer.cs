@@ -28,9 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // OverlayForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Magenta;
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Name = "OverlayForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "OverlayForm";
+            this.TransparencyKey = System.Drawing.Color.Magenta;
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
+            this.Load += new System.EventHandler(this.OverlayForm_Load);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
