@@ -15,6 +15,8 @@ namespace QewbeClient.API
     {
         internal ConfigManager Config { get; private set; }
 
+        internal Action<bool> LoginResult;
+
         internal bool IsLoggedIn { get; private set; }
 
         internal string Username { get; private set; }
@@ -23,8 +25,10 @@ namespace QewbeClient.API
         internal User(string username, string newPassword = "")
         {
             Config = new ConfigManager(string.Format(@"qewbe.{0}.cfg", username));
-            Username = username;
+            Qewbe.Config.Write<string>(@"activeuser", username);
             Token = Config.Read<string>(@"password", newPassword);
+
+            Username = username;
 
             Login();
         }
@@ -37,10 +41,9 @@ namespace QewbeClient.API
             HttpClient.SendRequest(new NetRequest(Endpoints.LOGIN, delegate(object r)
             {
                 LoginReply reply = Serializer.Deserialize<LoginReply>(r.ToString());
-                if (!reply.OK)
-                    throw new Exception(reply.Response.ToString()); //Todo: Change this
                 Token = reply.Token;
-                IsLoggedIn = true;
+                IsLoggedIn = reply.OK;
+                if (LoginResult != null) LoginResult(IsLoggedIn);
                 Qewbe.RunMainThread(delegate { Qewbe.OverlayForm.Show(); });
             }, Username, Token));
         }

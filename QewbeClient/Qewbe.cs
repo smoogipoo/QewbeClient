@@ -5,6 +5,7 @@ using QewbeClient.Helpers;
 using QewbeClient.Http;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,10 +85,11 @@ namespace QewbeClient
                 if (string.IsNullOrEmpty(activeUser))
                 {
                     if (new LoginCreateAccontForm().ShowDialog() != DialogResult.OK)
-                        Environment.Exit(1);
+                        Thread.CurrentThread.Abort();
                 }
                 else
                     ActiveUser = new User(activeUser);
+                Cleanup();
             }
         }
     }

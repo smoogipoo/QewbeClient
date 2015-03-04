@@ -31,9 +31,19 @@ namespace QewbeClient
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
             Qewbe.ActiveUser = new User(usernameBox.Text, passwordBox.Text);
-            Close();
+            Qewbe.ActiveUser.LoginResult += delegate (bool b)
+            {
+                if (b)
+                {
+                    DialogResult = DialogResult.OK;
+                    Qewbe.RunMainThread(delegate { Close(); });
+                }
+                else
+                {
+                    //Todo: Warn login failed
+                }
+            };
         }
     }
 }

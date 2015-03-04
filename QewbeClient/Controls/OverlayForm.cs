@@ -119,6 +119,9 @@ namespace QewbeClient
         {
             base.OnMouseUp(e);
             mouseDown = false;
+            Opacity = 0;
+            WindowState = FormWindowState.Minimized;
+            Cursor = Cursors.Default;
 
             captureArea(dragRectangle);
         }

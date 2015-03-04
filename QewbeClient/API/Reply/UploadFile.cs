@@ -35,7 +35,7 @@ namespace QewbeClient.API.Reply
 
         private void uploadCompleted(object res)
         {
-            if ((bool)res)
+            if (res != null && (bool)res)
             {
                 if (UploadSucceeded != null)
                     UploadSucceeded(this);
