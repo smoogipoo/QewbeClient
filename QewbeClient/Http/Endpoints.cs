@@ -8,10 +8,10 @@ namespace QewbeClient.Http
 {
     internal static class Endpoints
     {
-        private const string DOMAIN = @"http://smgi.me/Sync/";
+        private const string DOMAIN = @"http://api.qew.be/";
         private const string SERVICE = @"qewbe";
 
-        private const string API_ENDPOINT = DOMAIN + @"api/API.php?req={0}&service=" + SERVICE;
+        private const string API_ENDPOINT = DOMAIN + @"API.php?req={0}&service=" + SERVICE;
 
         /// <summary>
         /// GET APIModel/CreateAccount
