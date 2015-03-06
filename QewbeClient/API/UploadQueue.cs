@@ -65,7 +65,7 @@ namespace QewbeClient.API
 
             lock (fileQueue)
             {
-                for (int i = 0; i < fileQueue.Count || processingCount == MAX_CONCURRENT_UPLOADS; i++)
+                for (int i = 0; i < fileQueue.Count && processingCount <= MAX_CONCURRENT_UPLOADS; i++)
                 {
                     Interlocked.Increment(ref processingCount);
 
