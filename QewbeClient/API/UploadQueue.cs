@@ -80,7 +80,7 @@ namespace QewbeClient.API
                         else
                         {
                             Qewbe.RunMainThread(delegate { Clipboard.SetText(reply.File.Domain + @"/" + reply.File.Name); });
-                            UploadSucceeded(reply.File);
+                            uploadCompleted(reply.File);
                         }
                     }, User.Token));
                 }
