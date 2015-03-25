@@ -24,7 +24,7 @@ namespace QewbeClient.Http
             this.callback = callback;
         }
 
-        internal void InternalPerform()
+        internal void Perform()
         {
             object result = null;
             Task.Run(delegate
@@ -34,7 +34,7 @@ namespace QewbeClient.Http
                 {
                     try
                     {
-                        result = Perform();
+                        result = InternalPerform();
                         failed = false;
                     }
                     catch
@@ -45,7 +45,7 @@ namespace QewbeClient.Http
             }).ContinueWith(delegate { callback(result); });
         }
 
-        protected virtual object Perform()
+        protected virtual object InternalPerform()
         {
             WebResponse resp = HttpWebRequest.CreateHttp(Endpoint).GetResponse();
             using (StreamReader sr = new StreamReader(resp.GetResponseStream()))

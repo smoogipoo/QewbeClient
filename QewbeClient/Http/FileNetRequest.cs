@@ -21,7 +21,7 @@ namespace QewbeClient.Http
             this.file = file;
         }
 
-        protected override object Perform()
+        protected override object InternalPerform()
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Endpoint);
             req.Method = @"POST";

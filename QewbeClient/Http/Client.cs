@@ -23,7 +23,7 @@ namespace QewbeClient.Http
                     while (requests.Count > 0)
                     {
                         NetRequest req = requests.Dequeue();
-                        req.InternalPerform();
+                        req.Perform();
                     }
                 }
 #if !DEBUG
